@@ -59,8 +59,8 @@ DATABASES = {
   
 }
 
-GOOGLE_CLIENT_ID = "xxxx"
-GOOGLE_CLIENT_SECRET = "xxx"
+GOOGLE_CLIENT_ID = "something"
+GOOGLE_CLIENT_SECRET = "something"
 GOOGLE_REDIRECT_URI = "http://127.0.0.1:8000/accounts/google/callback/"
 
 
@@ -80,3 +80,16 @@ LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "login"
 AUTH_USER_MODEL = "accounts.User"
+
+#added code for email service
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = "yourgmail@gmail.com"
+EMAIL_HOST_PASSWORD = "your_gmail_app_password"
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
