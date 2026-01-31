@@ -1,0 +1,6 @@
+Django>=3.2
+google-auth>=2.0.0
+google-auth-oauthlib>=0.4.0
+google-api-python-client>=2.0.0
+# zoneinfo is in stdlib for Python >=3.9. If using older Python, install backports.zoneinfo
+# pip install backports.zoneinfo

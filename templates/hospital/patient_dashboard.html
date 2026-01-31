@@ -1,0 +1,39 @@
+<h2>Patient Dashboard</h2>
+
+<p>Patient: {{ request.user.username }}</p>
+
+<form method="post" action="{% url 'logout' %}">
+  {% csrf_token %}
+  <button type="submit">Logout</button>
+</form>
+
+<hr>
+
+<h3>Doctors</h3>
+<ul>
+  {% for doctor in doctors %}
+    <li>
+      Dr. {{ doctor.username }}
+      |
+      <a href="{% url 'doctor_slots' doctor.id %}">View Slots</a>
+    </li>
+  {% empty %}
+    <li>No doctors found</li>
+  {% endfor %}
+</ul>
+
+<hr>
+
+<h3>My Bookings</h3>
+<ul>
+  {% for b in bookings %}
+    <li>
+      Dr. {{ b.doctor.username }} |
+      {{ b.date }} {{ b.start_time }} - {{ b.end_time }}
+    </li>
+  {% empty %}
+    <li>No bookings yet</li>
+  {% endfor %}
+</ul>
+
+

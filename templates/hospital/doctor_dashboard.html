@@ -1,0 +1,65 @@
+<h2>Doctor Dashboard</h2>
+
+<p>Doctor: {{ request.user.username }}</p>
+
+<form method="post" action="{% url 'logout' %}">
+  {% csrf_token %}
+  <button type="submit">Logout</button>
+</form>
+
+{% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+<p>
+  Google Calendar status:
+  {% if request.user.google_access_token %}
+    <strong>Connected</strong>
+  {% else %}
+    <strong>Not Connected</strong>
+  {% endif %}
+</p>
+
+{% if not request.user.google_access_token %}
+  <a href="{% url 'google_connect' %}"><button type="button">Connect Google Calendar</button></a>
+{% else %}
+  <a href="{% url 'google_connect' %}"><button type="button">Reconnect / Refresh Access</button></a>
+{% endif %}
+
+<hr>
+
+<form method="post">
+  {% csrf_token %}
+  Date: <input type="date" name="date"><br>
+  Start time: <input type="time" name="start_time"><br>
+  End time: <input type="time" name="end_time"><br>
+  <button type="submit">Add Slot</button>
+</form>
+
+<hr>
+
+<h3>Your Slots</h3>
+<ul>
+  {% for slot in slots %}
+    <li>
+      {{ slot.date }} |
+      {{ slot.start_time }} - {{ slot.end_time }}
+      {% if slot.is_booked %}(Booked){% else %}(Free){% endif %}
+    </li>
+  {% empty %}
+    <li>No slots created</li>
+  {% endfor %}
+</ul>
+
+<h3>Your Bookings</h3>
+<ul>
+  {% for b in bookings %}
+    <li>{{ b.date }} {{ b.start_time }} - Patient: {{ b.patient }}</li>
+  {% empty %}
+    <li>No bookings yet</li>
+  {% endfor %}
+</ul>

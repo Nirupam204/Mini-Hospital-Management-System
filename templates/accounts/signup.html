@@ -1,0 +1,16 @@
+<h2>Signup</h2>
+
+{{ form.errors }}
+
+<form method="POST">
+  {% csrf_token %}
+  <p>Username: {{ form.username }}</p>
+  <p>Email: {{ form.email }}</p>
+  <p>Role: {{ form.role }}</p>
+  <p>Password: {{ form.password1 }}</p>
+  <p>Confirm Password: {{ form.password2 }}</p>
+  <button type="submit">Signup</button>
+</form>
+
+<p><a href="{% url 'login' %}">Already have account? Login</a></p>
+
