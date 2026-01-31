@@ -1,94 +1,35 @@
-from pathlib import Path
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-SECRET_KEY = "django-insecure-change-this"
-DEBUG = True
-ALLOWED_HOSTS = []
-
-INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "accounts",
-    "hospital",
-    "notifications",
-]
-
-MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
-]
-
-ROOT_URLCONF = "config.urls"
-
-TEMPLATES = [
-    {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
-        "APP_DIRS": True,
-        "OPTIONS": {
-            "context_processors": [
-                "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
-            ],
-        },
-    },
-]
-
-WSGI_APPLICATION = "config.wsgi.application"
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "mini_hms_db",
-        "USER": "postgres",
-        "PASSWORD": "nirupam",
-        "HOST": "localhost",
-        "PORT": "5432",
-    }
-  
-}
-
-GOOGLE_CLIENT_ID = "something"
-GOOGLE_CLIENT_SECRET = "something"
-GOOGLE_REDIRECT_URI = "http://127.0.0.1:8000/accounts/google/callback/"
+from django.core.mail import send_mail
+from django.conf import settings
 
 
-AUTH_PASSWORD_VALIDATORS = []
-    
+def send_booking_email(doctor, patient, slot, calendar_added):
+    subject = "Appointment Confirmed"
 
-LANGUAGE_CODE = "en-us"
-TIME_ZONE = "UTC"
-USE_I18N = True
-USE_TZ = True
+    message = f"""
+Appointment Details
 
-STATIC_URL = "static/"
+Doctor: Dr. {doctor.username}
+Patient: {patient.username}
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+Date: {slot.date}
+Time: {slot.start_time} - {slot.end_time}
 
-LOGIN_URL = "login"
-LOGIN_REDIRECT_URL = "dashboard"
-LOGOUT_REDIRECT_URL = "login"
-AUTH_USER_MODEL = "accounts.User"
+Google Calendar: {"Added" if calendar_added else "Not Added"}
+"""
 
-#added code for email service
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    recipients = []
 
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+    if doctor.email:
+        recipients.append(doctor.email)
+    if patient.email:
+        recipients.append(patient.email)
 
-EMAIL_HOST_USER = "yourgmail@gmail.com"
-EMAIL_HOST_PASSWORD = "your_gmail_app_password"
+    send_mail(
+        subject,
+        message,
+        settings.DEFAULT_FROM_EMAIL,
+        recipients,
+        fail_silently=True
+    )
 
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
