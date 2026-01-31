@@ -3,6 +3,7 @@ from django.http import HttpResponseForbidden
 from accounts.models import User
 from .models import Slot
 from .google_calendar import create_calendar_event
+from .email_service import send_booking_email
 
 
 
@@ -65,14 +66,27 @@ def doctor_slots(request, doctor_id):
 
 @patient_required
 def book_slot(request, slot_id):
+   @patient_required
+def book_slot(request, slot_id):
     slot = get_object_or_404(Slot, id=slot_id, is_booked=False)
 
     slot.is_booked = True
     slot.patient = request.user
     slot.save()
 
+    calendar_added = False
+
     if slot.doctor.google_access_token:
-        create_calendar_event(slot.doctor, slot)
+        event_id = create_calendar_event(slot.doctor, slot)
+        if event_id:
+            calendar_added = True
+
+    send_booking_email(
+        doctor=slot.doctor,
+        patient=slot.patient,
+        slot=slot,
+        calendar_added=calendar_added
+    )
 
     return redirect("patient_dashboard")
 
